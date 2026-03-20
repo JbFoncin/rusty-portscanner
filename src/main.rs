@@ -22,7 +22,7 @@ async fn loop_over_all_values(ip_addr: &str) -> Vec<u16> {
     let mut open_ports: Vec<u16> = Vec::with_capacity(1000);
     let mut tasks: Vec<JoinHandle<Option<u16>>> = Vec::with_capacity(65535);
     let ip_to_scan: IpAddr = IpAddr::from_str(&ip_addr).unwrap();
-    let sem_arc = Arc::new(Semaphore::new(500));
+    let sem_arc: Arc<Semaphore> = Arc::new(Semaphore::new(500));
     for port in 0..=65535_u16 {
         let timeout_duration: Duration = Duration::from_millis(100000); //big timeout because most servers restrict too much connexions        
         let fut = timeout(timeout_duration, connect_to_addr(ip_to_scan, port, sem_arc.clone()));
