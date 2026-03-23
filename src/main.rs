@@ -27,7 +27,7 @@ async fn loop_over_all_values(ip_addr: &str) -> Vec<u16> {
         let timeout_duration: Duration = Duration::from_millis(100000); //big timeout because most servers restrict too much connexions        
         let fut = timeout(timeout_duration, connect_to_addr(ip_to_scan, port, sem_arc.clone()));
         let task: JoinHandle<Option<u16>> = tokio::task::spawn(async { if let Ok(result) = fut.await { result }
-                                                                else { None } });
+                                                                       else { None } });
         tasks.push(task);
     }
     for task in tasks {
@@ -39,6 +39,7 @@ async fn loop_over_all_values(ip_addr: &str) -> Vec<u16> {
 #[tokio::main]
 async fn main() {
     let args: Vec<String> = std::env::args().collect();
+    if args.len() != 2 { println!("No IP adress provided"); return }
     let ip_to_scan: String = args[1].clone();
     let open_ports: Vec<u16> = loop_over_all_values(&ip_to_scan).await;
     println!("{:?}", &open_ports)
